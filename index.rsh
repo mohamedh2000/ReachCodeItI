@@ -48,8 +48,9 @@ export const main = Reach.App(() => {
     commit()
     Buyer.only(() => {
         const description = declassify(interact.getDescription())
+        const payment = declassify(interact.seePrice())
     })
-    Buyer.publish(description)
+    Buyer.publish(description, payment).pay(payment)
     commit()
 
 });
