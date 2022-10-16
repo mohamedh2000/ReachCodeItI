@@ -19,3 +19,24 @@ const standardBalanceUserB = fmt(atomicBalanceUserB, 3);
 
 console.log(atomicBalanceUserA,atomicBalanceUserB,
     standardBalanceUserA,standardBalanceUserB)
+
+    const codeII = (Who) =>  ({
+        ...stdlib.hasRandom, 
+        seePrice: () => { 
+            const hand = Math.floor(Math.random() * 3);
+            console.log(`${Who} played ${HAND[hand]}`);
+            return hand;
+        }
+    })
+    
+    await Promise.all([
+        ctcUserA.p.Alice({
+            //Alice interact Object here
+            ...codeII('Alice'),
+            price: stdlib.parseCurrency(5)    
+        }),
+        ctcUserB.p.Bob({
+            //Bob Interact Object here
+            ...codeII('Bob'),
+        })
+    ])

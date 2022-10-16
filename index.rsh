@@ -6,6 +6,7 @@ const codeI = {
 }
 
 const codeII = {
+    ...hasRandom, 
     seePrice: Fun([], UInt),
     getDescription: Fun([], UInt) //should be a byte 
 }
@@ -27,7 +28,8 @@ export const main = Reach.App(() => {
         ...codeII
     })
     const Buyer = Participant('Buyer', {
-        ...codeII
+        ...codeII,
+        price: UInt
     })
     init()
 
@@ -48,9 +50,17 @@ export const main = Reach.App(() => {
     commit()
     Buyer.only(() => {
         const description = declassify(interact.getDescription())
-        const payment = declassify(interact.seePrice())
+        const _payment = interact.seePrice()
+        const [_commitBuyer, _saltBuyer] = makeCommitment(interact, _payment);
+        const commitBuyer = declassify(_commitBuyer);
     })
-    Buyer.publish(description, payment).pay(payment)
+    Buyer.publish(description, commitBuyer).pay(price)
     commit()
 
+    Buyer.only(() => {
+        const saltBuyer = declassify(_saltBuyer)
+        const payment = declassify(_payment)
+    })
+    Buyer.publish(saltBuyer, payment)
+    checkCommitment(commitBuyer, saltBuyer, payment)
 });
